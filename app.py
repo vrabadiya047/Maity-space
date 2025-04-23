@@ -2,12 +2,16 @@ import numpy as np
 from flask import Flask, jsonify
 import requests
 from flask_cors import CORS
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 URL = 'https://discosweb.esoc.esa.int'
-token = '' # Replace with your actual token
+token = os.getenv('DISCOS_TOKEN')  # add yout token in .env file
 
 @app.route('/api/spacecraft', methods=['GET'])
 def get_spacecraft():
@@ -29,7 +33,7 @@ def get_spacecraft():
         cleaned_data = []
         for obj in data:
             attributes = obj.get("attributes", {})
-            valid_attributes = {k: v for k, v in attributes.items() if v not in [None]}
+            valid_attributes = {k: v for k, v in attributes.items() if v is not None}
             obj["attributes"] = valid_attributes
             cleaned_data.append(obj)
 
